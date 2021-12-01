@@ -34,14 +34,14 @@ def task_detail(request, pk):
     """
     try:
         task = Task.objects.get(pk=pk)
-        all_tasks = Task.objects.all()
     except Task.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         # serializer = TaskSerializer(all_tasks)
-        _json = serializers.serialize("json", all_tasks)
-        return JsonResponse(model_to_dict(all_tasks), safe=False)
+        all_tasks = Task.objects.all()
+        serializer_json = serializers.serialize("json", all_tasks)
+        return HttpResponse(serializer_json, content_type="application/json")
 
     elif request.method == 'POST':
         serializer = TaskSerializer(task, data=request.data)
