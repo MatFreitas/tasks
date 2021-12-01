@@ -39,9 +39,8 @@ def task_detail(request):
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            serializer_json = serializers.serialize("json", serializer)
-            return HttpResponse(serializer_json, content_type="application/json")
-        return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
 
@@ -59,5 +58,4 @@ def delete_task(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
         
     task.delete()
-    serializer_json = serializers.serialize("json", task)
-    return HttpResponse(serializer_json, content_type="application/json", status=status.HTTP_204_NO_CONTENT)
+    return HttpResponse("Task deletada com sucesso", status=status.HTTP_200_OK)
