@@ -44,7 +44,7 @@ def task_detail(request, pk):
     #     return HttpResponse(serializer_json, content_type="application/json")
 
     if request.method == 'POST':
-        serializer = TaskSerializer(task, data=request.data)
+        serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return HttpResponse(request.data, content_type="application/json")
@@ -66,6 +66,7 @@ def post_task(request):
     serializer = TaskSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return HttpResponse(request.data, content_type="application/json")
+        serializer_json = serializers.serialize("json", request.data)
+        return HttpResponse(serializer_json,  content_type="application/json", status=status.HTTP_201_CREATED)
     return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
