@@ -53,3 +53,9 @@ def task_detail(request, pk):
     elif request.method == 'DELETE':
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET'])
+def get_task(request):
+    all_tasks = Task.objects.all()
+    serializer_json = serializers.serialize("json", all_tasks)
+    return HttpResponse(serializer_json, content_type="application/json")
