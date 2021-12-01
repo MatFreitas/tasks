@@ -4,7 +4,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth.models import Task
 from .serializers import TaskSerializer
 from .models import Task
 from django.forms.models import model_to_dict
