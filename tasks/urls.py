@@ -8,6 +8,7 @@ from rest_framework import routers
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', views.index, name='index'),
-    path('tasks/', views.task_detail, name='tasks'),
+    path('tasks/<int:pk>', views.task_detail, name='tasks'),
     path('allTasks/', views.get_task, name='allTasks'),
+    path('postTasks/', views.post_task, name='postTasks'),
 ]

@@ -37,25 +37,35 @@ def task_detail(request, pk):
     except Task.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
-        # serializer = TaskSerializer(all_tasks)
-        all_tasks = Task.objects.all()
-        serializer_json = serializers.serialize("json", all_tasks)
-        return HttpResponse(serializer_json, content_type="application/json")
+    # if request.method == 'GET':
+    #     # serializer = TaskSerializer(all_tasks)
+    #     all_tasks = Task.objects.all()
+    #     serializer_json = serializers.serialize("json", all_tasks)
+    #     return HttpResponse(serializer_json, content_type="application/json")
 
-    elif request.method == 'POST':
+    if request.method == 'POST':
         serializer = TaskSerializer(task, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(request.data, content_type="application/json")
+        return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         task.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer_json = serializers.serialize("json", task)
+        return HttpResponse(serializer_json, content_type="application/json", status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def get_task(request):
     all_tasks = Task.objects.all()
     serializer_json = serializers.serialize("json", all_tasks)
     return HttpResponse(serializer_json, content_type="application/json")
+
+@api_view(['POST'])
+def post_task(request):
+    serializer = TaskSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return HttpResponse(request.data, content_type="application/json")
+    return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
