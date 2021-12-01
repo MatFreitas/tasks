@@ -27,33 +27,23 @@ def index(request):
     return HttpResponse("Hello, world. You're at the tasks index.")
 
 
-@api_view(['GET', 'POST', 'DELETE'])
-def task_detail(request, pk):
-    """
-    Retrieve, update or delete a code task.
-    """
-    try:
-        task = Task.objects.get(pk=pk)
-    except Task.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+@api_view(['GET', 'POST'])
+def task_detail(request):
 
-    # if request.method == 'GET':
-    #     # serializer = TaskSerializer(all_tasks)
-    #     all_tasks = Task.objects.all()
-    #     serializer_json = serializers.serialize("json", all_tasks)
-    #     return HttpResponse(serializer_json, content_type="application/json")
+    if request.method == 'GET':
+        all_tasks = Task.objects.all()
+        serializer_json = serializers.serialize("json", all_tasks)
+        return HttpResponse(serializer_json, content_type="application/json", status=status.HTTP_200_OK)
 
-    if request.method == 'POST':
+    elif request.method == 'POST':
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return HttpResponse(request.data, content_type="application/json")
+            serializer_json = serializers.serialize("json", serializer)
+            return HttpResponse(serializer_json, content_type="application/json")
         return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
-        task.delete()
-        serializer_json = serializers.serialize("json", task)
-        return HttpResponse(serializer_json, content_type="application/json", status=status.HTTP_204_NO_CONTENT)
+    
 
 @api_view(['GET'])
 def get_task(request):
@@ -61,12 +51,13 @@ def get_task(request):
     serializer_json = serializers.serialize("json", all_tasks)
     return HttpResponse(serializer_json, content_type="application/json")
 
-@api_view(['POST'])
-def post_task(request):
-    serializer = TaskSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        serializer_json = serializers.serialize("json", serializer)
-        return HttpResponse(serializer_json,  content_type="application/json", status=status.HTTP_201_CREATED)
-    return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+@api_view(['DELETE'])
+def delete_task(request, pk):
+    try:
+        task = Task.objects.get(pk=pk)
+    except Task.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    task.delete()
+    serializer_json = serializers.serialize("json", task)
+    return HttpResponse(serializer_json, content_type="application/json", status=status.HTTP_204_NO_CONTENT)
