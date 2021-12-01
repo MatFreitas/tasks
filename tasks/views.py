@@ -5,8 +5,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import Task
-from serializers import TaskSerializer
-from models import Task
+from .serializers import TaskSerializer
+from .models import Task
+from django.forms.models import model_to_dict
+from django.http import JsonResponse
+from django.core import serializers
+
+
 
 
 # Create your views here.
@@ -35,8 +40,9 @@ def task_detail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = TaskSerializer(all_tasks)
-        return Response(serializer.data)
+        # serializer = TaskSerializer(all_tasks)
+        _json = serializers.serialize("json", all_tasks)
+        return JsonResponse(model_to_dict(all_tasks), safe=False)
 
     elif request.method == 'POST':
         serializer = TaskSerializer(task, data=request.data)
